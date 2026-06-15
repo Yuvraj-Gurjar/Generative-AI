@@ -1,0 +1,24 @@
+# Core RAG Framework
+langchain
+langchain-core
+langchain-community
+
+# LLM Providers
+openai
+langchain-openai
+mistralai
+langchain-mistralai
+
+# Vector Database
+chromadb
+
+# Tokenization & Local Embeddings (Optional but recommended)
+tiktoken
+sentence-transformers
+
+# Document Loaders & Parsers (Add more based on your data sources)
+pypdf
+beautifulsoup4
+
+# Environment Variables Management
+python-dotenv
