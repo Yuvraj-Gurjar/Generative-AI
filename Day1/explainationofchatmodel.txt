@@ -1,0 +1,82 @@
+This project is a Command-Line Interface (CLI) Chatbot built with Python and LangChain. It allows a user to select a specific "personality" for the AI and then chat with it in the terminal, while the application remembers the conversation history.
+
+Here is a step-by-step breakdown of every command, its purpose, and what happens when it runs.
+
+1. The Imports
+Python
+from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
+from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
+Purpose: These lines bring in the external tools required for the script to work.
+
+What happens: * dotenv is imported to handle hidden passwords/API keys.
+
+init_chat_model is imported to easily connect to AI models.
+
+The messages components are imported to categorize the text so the AI knows who is speaking (System, AI, or Human).
+
+2. Loading Environment Variables
+Python
+load_dotenv()
+Purpose: To securely load your API keys without hardcoding them into the script.
+
+What happens: Python searches your project folder for a .env file, extracts the variables inside (like your GROQ_API_KEY), and secretly loads them into your system's background environment so LangChain can use them.
+
+3. Initializing the Model
+Python
+model = init_chat_model(
+    model="llama-3.3-70b-versatile", temperature=0.9, max_tokens=25, 
+    model_provider="groq"
+)
+Purpose: To set up the connection to the specific AI brain you want to use.
+
+What happens: This creates a model object connected to Groq's servers using the Llama 3.3 model.
+
+temperature=0.9 makes the AI's responses highly creative and slightly unpredictable.
+
+max_tokens=25 places a strict limit on the response length (it will cut off after roughly 18–20 words).
+
+4. Setting the AI's Persona
+Python
+print("choose your Ai mode")
+...
+choice=int(input("Tell your response:-"))
+
+if choice==1:
+    mode="You are a angry ai agent.Response agressively."
+...
+messages=[
+    SystemMessage(content=mode)
+]
+Purpose: To define how the AI should behave and set up the chat memory.
+
+What happens: The user is prompted to type 1, 2, or 3. Based on the input, a specific text instruction is saved to the mode variable. This text is then wrapped in a SystemMessage (which acts as the hidden core instruction for the AI) and placed inside a list called messages. This list will act as the AI's memory.
+
+5. The Chat Loop
+Python
+while True:
+    prompt=input("You:")
+    messages.append(HumanMessage(content=prompt))
+    if prompt=="0":
+        break
+Purpose: To keep the conversation going indefinitely until the user decides to quit.
+
+What happens: The while True: creates an infinite loop. It waits for the user to type something. Once typed, the text is wrapped in a HumanMessage and added to the messages memory list. If the user types exactly 0, the break command triggers, instantly shattering the loop and ending the chat phase.
+
+6. AI Inference & Memory Update
+Python
+    response = model.invoke(messages)
+    messages.append(AIMessage(content=response.content))
+Purpose: To get an answer from the AI and teach it what it just said so it remembers the context.
+
+What happens: * model.invoke(messages) bundles up the entire chat history (the system instruction + all past user/bot messages) and sends it over the internet to Groq. Groq processes it and sends back a response object.
+
+The second line takes the text from that response (response.content), wraps it in an AIMessage, and appends it to the messages list.
+
+7. Outputting the Results
+Python
+    print("Bot:",response.content)
+print(messages)
+Purpose: To display the AI's reply to the user, and finally, show the raw backend data.
+
+What happens: The print("Bot:"...) runs inside the loop, showing the user the reply. Once the user types 0 and breaks the loop, the final line print(messages) runs. This prints out the raw Python list containing all the SystemMessage, HumanMessage, and AIMessage objects accumulated during the session.
